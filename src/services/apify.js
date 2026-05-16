@@ -121,9 +121,9 @@ export async function fetchProfileFromApify(username) {
         'Token Apify inválido ou em falta. Verifique APIFY_TOKEN em .env.local e reinicie o npm run dev.',
       );
     }
-    if (res.status === 404) {
+    if (res.status === 404 || res.status === 405) {
       throw new Error(
-        'Proxy Apify indisponível. Use npm run dev (não abra só o ficheiro dist/).',
+        'Proxy Apify indisponível no servidor. Confirme o deploy com as rotas /api/apify no Vercel.',
       );
     }
     throw new Error(msg);
