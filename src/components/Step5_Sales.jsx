@@ -89,7 +89,7 @@ function Step5_Sales({ username, profileSnapshot, prevStep }) {
 
         <div style={{ marginTop: 'auto', marginBottom: '24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Por R$ 29,90</span>
+            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Por R$ 19,90</span>
           </div>
 
           <button className="btn-primary" onClick={handleCheckout} style={{ width: '100%', padding: '14px', borderRadius: '8px', fontSize: '1rem', fontWeight: 'bold' }}>

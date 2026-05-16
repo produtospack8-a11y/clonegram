@@ -51,7 +51,7 @@ function Step1_Search({ onSearchProfile }) {
         
         <div style={{ backgroundColor: '#1a1a1a', padding: '16px', borderRadius: '8px', marginBottom: '32px', border: '1px solid #333' }}>
           <p style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 'bold' }}>Acesso Premium Ilimitado</p>
-          <p style={{ color: 'var(--primary)', fontSize: '1.5rem', fontWeight: 'bold', margin: '8px 0' }}>Por apenas R$ 29,90</p>
+          <p style={{ color: 'var(--primary)', fontSize: '1.5rem', fontWeight: 'bold', margin: '8px 0' }}>Por apenas R$ 19,90</p>
         </div>
 
         <a
