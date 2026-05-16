@@ -37,8 +37,14 @@ export default async function handler(req, res) {
 
     const response = await fetch(targetUrl, options);
     
-    // Ler como texto primeiro, e tentar passar adiante com os cabeçalhos originais ou ao menos json
+    // Ler como texto primeiro
     const data = await response.text();
+
+    if (!response.ok) {
+      return res.status(response.status).json({
+        error: `[DEBUG] targetUrl: ${targetUrl} | method: ${req.method} | status: ${response.status} | response: ${data}`
+      });
+    }
     
     const contentType = response.headers.get('content-type') || 'application/json';
     res.setHeader('Content-Type', contentType);
