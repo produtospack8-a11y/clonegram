@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/api/apify/:match*", "destination": "/api/apify" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
