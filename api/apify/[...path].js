@@ -5,11 +5,23 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Missing APIFY_TOKEN in Vercel environment variables' });
   }
 
-  // A URL da requisição vai ser, por exemplo, /api/apify/v2/acts/xxxx
-  // Extraímos tudo depois de /api/apify
-  const targetPath = req.url.replace(/^\/api\/apify/, '');
-  const targetUrl = `https://api.apify.com${targetPath}`;
+  let pathStr = '';
+  if (Array.isArray(req.query.path)) {
+    pathStr = '/' + req.query.path.join('/');
+  } else if (typeof req.query.path === 'string') {
+    pathStr = '/' + req.query.path;
+  } else {
+    // fallback
+    pathStr = req.url.replace(/^\/api\/apify/, '').split('?')[0];
+  }
 
+  // Rebuild query string without the 'path' parameter
+  const queryObj = { ...req.query };
+  delete queryObj.path;
+  const searchParams = new URLSearchParams(queryObj);
+  const searchStr = searchParams.toString();
+
+  const targetUrl = `https://api.apify.com${pathStr}${searchStr ? '?' + searchStr : ''}`;
   try {
     const options = {
       method: req.method,
