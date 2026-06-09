@@ -84,17 +84,17 @@ function Step5_Sales({ username, profileSnapshot }) {
 
         <div style={{ marginTop: 'auto', marginBottom: '24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>R$ 47,00</span>
-            <span style={{ color: '#8e8e8e', fontSize: '0.9rem' }}> / mês</span>
-            <div style={{ textDecoration: 'line-through', color: '#555', fontSize: '0.85rem', marginTop: '4px' }}>De R$ 197,00</div>
+            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>R$ 19,90</span>
+            <span style={{ color: '#8e8e8e', fontSize: '0.9rem' }}> (valor único)</span>
+            <div style={{ textDecoration: 'line-through', color: '#555', fontSize: '0.85rem', marginTop: '4px' }}>De R$ 97,00</div>
           </div>
 
           <button className="btn-primary" onClick={handleCheckout} style={{ width: '100%', padding: '14px', borderRadius: '8px', fontSize: '1rem', fontWeight: 'bold' }}>
-            Assinar e Acessar Agora
+            Desbloquear e Acessar Agora
           </button>
           
           <div style={{ textAlign: 'center', marginTop: '16px', fontSize: '0.75rem', color: '#8e8e8e' }}>
-            Você pode cancelar a qualquer momento em Configurações &gt; Assinaturas.<br />
+            Acesso vitalício sem cobranças recorrentes.<br />
             Cobrado via Meta Pay.
           </div>
         </div>
