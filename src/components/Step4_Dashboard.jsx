@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getFollowers, getProfileInfo, getPosts } from '../services/api';
 import PublicImage from './PublicImage';
-import ProfileAvatar from './ProfileAvatar';
 
 /** Bases de ficheiro em `public/` (sem extensão). PublicImage tenta .webp, .jpg, .jpeg, .png e capitalização. */
 const FEED_IMAGE_BASES = [['postinsta1'], ['postinsta4', 'post4'], ['postinsta3']];
@@ -29,15 +28,6 @@ const STORY_FULL_BASES = [
   ['story3', 'story 3'],
 ];
 
-const PREVIEW_SECONDS = 9 * 60 + 46;
-
-function formatCountdown(totalSeconds) {
-  const s = Math.max(0, totalSeconds);
-  const m = Math.floor(s / 60);
-  const sec = s % 60;
-  return `${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
-}
-
 function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
   const [view, setView] = useState('home'); // 'home' or 'dms'
   const [avatars, setAvatars] = useState([]);
@@ -45,7 +35,6 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeStory, setActiveStory] = useState(null); // the user object whose story is being viewed
   const [activeStoryIndex, setActiveStoryIndex] = useState(null);
-  const [previewSecondsLeft, setPreviewSecondsLeft] = useState(PREVIEW_SECONDS);
 
   useEffect(() => {
     let isMounted = true;
@@ -147,13 +136,6 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
     return () => { isMounted = false; };
   }, [username]);
 
-  useEffect(() => {
-    const tick = setInterval(() => {
-      setPreviewSecondsLeft((s) => (s > 0 ? s - 1 : 0));
-    }, 1000);
-    return () => clearInterval(tick);
-  }, []);
-
   const maskUsername = (name) => {
     if (!name) return 'User*****';
     if (name.includes('*')) return name;
@@ -175,7 +157,7 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
   };
 
   const HomeView = () => (
-    <div>
+    <div style={{ paddingBottom: '120px' }}>
       {/* Top Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #262626' }}>
         <div style={{ fontFamily: "'Dancing Script', cursive", fontSize: '1.8rem', fontWeight: 'bold' }}>Instagram</div>
@@ -193,11 +175,14 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', position: 'relative', marginBottom: '4px' }}>
              {profileSnapshot?.picUrl ? (
-               <ProfileAvatar
+               <img
                  src={profileSnapshot.picUrl}
                  alt="Seu story"
-                 size={64}
-                 fallbackLetter={(username || '?').charAt(0).toUpperCase()}
+                 width={64}
+                 height={64}
+                 loading="eager"
+                 decoding="async"
+                 style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
                />
              ) : (
                <img
@@ -218,7 +203,7 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
         </div>
         
         {!isLoading && avatars.map((user, idx) => (
-          <div key={idx} onClick={() => (idx < 3 ? openStory(user, idx) : handleVIPClick())} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
+          <div key={idx} onClick={() => (idx < 3 ? openStory(user, idx) : null)} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
             <div className="story-border" style={{ marginBottom: '4px', borderColor: idx < 3 ? '#d92a7e' : '#262626' }}>
               {idx < 3 ? (
                 <PublicImage
@@ -296,7 +281,7 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
                 </div>
                 <div>
                   <div style={{ fontSize: '0.9rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {idx === 0 ? 'sar*' : idx === 1 ? 'lua*' : idx === 2 ? 'lar*' : maskUsername(post.author?.username)}
+                    {maskUsername(post.author?.username)}
                     <span style={{ color: '#8e8e8e', fontSize: '0.8rem', fontWeight: 'normal' }}>• Há algumas horas</span>
                   </div>
                   <div style={{ fontSize: '0.75rem', color: '#f5f5f5' }}>Áudio original</div>
@@ -329,9 +314,9 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
               </div>
-              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '4px' }}>Curtido por *** e outras pessoas</div>
+              <div style={{ fontWeight: 'bold', fontSize: '0.9rem', marginBottom: '4px' }}>Curtido por VIPs e outras pessoas</div>
               <div style={{ fontSize: '0.9rem' }}>
-                <span style={{ fontWeight: 'bold', marginRight: '6px' }}>{idx === 0 ? 'sar*' : idx === 1 ? 'lua*' : idx === 2 ? 'lar*' : maskUsername(post.author?.username)}</span>
+                <span style={{ fontWeight: 'bold', marginRight: '6px' }}>{maskUsername(post.author?.username)}</span>
                 <span style={{ color: '#8e8e8e' }}>Conteúdo restrito apenas para assinantes...</span>
               </div>
             </div>
@@ -342,7 +327,7 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
   );
 
   const DmsView = () => (
-    <div style={{ padding: 0 }}>
+    <div style={{ padding: '0', paddingBottom: '120px' }}>
       {/* Top Header */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #262626' }}>
         <svg onClick={() => setView('home')} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '16px' }}><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -362,36 +347,30 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
           <span style={{ color: '#8e8e8e', fontSize: '0.95rem' }}>Pesquisar</span>
         </div>
 
-        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', marginBottom: '24px', paddingBottom: '8px', paddingTop: '28px' }}>
+        <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', marginBottom: '24px', paddingBottom: '8px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, position: 'relative' }}>
-            <div style={{ position: 'absolute', top: '-28px', background: '#262626', padding: '6px 12px', borderRadius: '16px', fontSize: '0.75rem', color: '#8e8e8e', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', zIndex: 2 }}>Nota...</div>
-            {profileSnapshot?.picUrl ? (
-               <ProfileAvatar
-                 src={profileSnapshot.picUrl}
-                 alt="Sua nota"
-                 size={70}
-                 fallbackLetter={(username || '?').charAt(0).toUpperCase()}
-               />
-             ) : (
-               <img
-                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent((username || '?').charAt(0))}&background=333&color=fff`}
-                 alt="Sua nota"
-                 width={70}
-                 height={70}
-                 loading="lazy"
-                 decoding="async"
-                 style={{ width: '70px', height: '70px', borderRadius: '50%', objectFit: 'cover' }}
-               />
-             )}
+            <div style={{ position: 'absolute', top: '-15px', background: '#262626', padding: '6px 12px', borderRadius: '16px', fontSize: '0.75rem', color: '#8e8e8e', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Nota...</div>
+            <img
+              src={
+                profileSnapshot?.picUrl ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(username.charAt(0) || '?')}&background=333&color=fff`
+              }
+              style={{ width: '70px', height: '70px', borderRadius: '50%', marginTop: '16px', objectFit: 'cover' }}
+              alt=""
+              width={70}
+              height={70}
+              loading="lazy"
+              decoding="async"
+            />
             <span style={{ fontSize: '0.75rem', color: '#8e8e8e', marginTop: '6px' }}>Sua nota</span>
           </div>
           
           {!isLoading && avatars.slice(1, 4).map((user, idx) => (
             <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, position: 'relative' }}>
-               <div style={{ position: 'absolute', top: '-28px', background: '#262626', padding: '6px 12px', borderRadius: '16px', fontSize: '0.75rem', color: '#f5f5f5', boxShadow: '0 2px 4px rgba(0,0,0,0.5)', whiteSpace: 'nowrap', zIndex: 2 }}>
+               <div style={{ position: 'absolute', top: '-15px', background: '#262626', padding: '6px 12px', borderRadius: '16px', fontSize: '0.75rem', color: '#f5f5f5', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
                  {['Tô entediada', 'Bora sair?', 'Saudade de vc'][idx]}
                </div>
-               <img src={user.profile_pic_url} style={{ width: '70px', height: '70px', borderRadius: '50%', filter: 'blur(4px)', objectFit: 'cover' }} alt="" />
+               <img src={user.profile_pic_url} style={{ width: '70px', height: '70px', borderRadius: '50%', marginTop: '16px', filter: 'blur(4px)' }} alt="" />
                <span style={{ fontSize: '0.75rem', color: '#f5f5f5', marginTop: '6px' }}>{maskUsername(user.username)}</span>
             </div>
           ))}
@@ -449,88 +428,33 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
     </div>
   );
 
-  const showChrome = !activeStory;
-
   return (
-    <div className="step4-root animate-fade-in">
+    <div className="animate-fade-in" style={{ height: '100vh', width: '100%', backgroundColor: '#000', position: 'relative', overflowY: 'auto', overflowX: 'hidden' }}>
+      
       <style>
         {`@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');`}
       </style>
 
-      <div className="step4-scroll" role="region" aria-label="Feed">
-        {view === 'home' ? HomeView() : DmsView()}
+      {/* Aviso de Prévia */}
+      <div style={{
+        background: 'linear-gradient(45deg, #f9ce34, #ee2a7b, #6228d7)',
+        color: '#fff',
+        padding: '12px 16px',
+        textAlign: 'center',
+        fontSize: '0.85rem',
+        fontWeight: 'bold',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        cursor: 'pointer',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+      }} onClick={handleVIPClick}>
+        <span style={{ textTransform: 'uppercase', background: 'rgba(255,255,255,0.2)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.75rem', marginRight: '4px' }}>Prévia</span>
+        <span>Para clonar a conta desbloqueie o acesso VIP!</span>
       </div>
 
-      {showChrome && (
-        <aside className="step4-limited-bar" aria-live="polite">
-          <div className="step4-limited-bar__card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <div
-                  style={{
-                    width: '40px',
-                    height: '40px',
-                    borderRadius: '50%',
-                    backgroundColor: '#262626',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="#0095f6" aria-hidden>
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
-                </div>
-                <div>
-                  <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Acesso Limitado</div>
-                  <div style={{ fontSize: '0.8rem', color: '#8e8e8e' }}>Prévia de 10 min ativa.</div>
-                </div>
-              </div>
-              <div style={{ color: '#ed4956', fontWeight: 'bold', fontSize: '0.9rem', fontVariantNumeric: 'tabular-nums' }}>
-                {formatCountdown(previewSecondsLeft)}
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={handleVIPClick}
-              className="btn-primary"
-              style={{ width: '100%', padding: '10px', fontSize: '0.9rem' }}
-            >
-              Desbloquear Acesso Total
-            </button>
-          </div>
-        </aside>
-      )}
-
-      {view === 'home' && showChrome && (
-        <nav className="step4-bottom-nav" aria-label="Navegação">
-          <svg onClick={handleVIPClick} width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden style={{ cursor: 'pointer' }}><path d="M12 3l9 8v10h-6v-6H9v6H3V11l9-8z" /></svg>
-          <svg onClick={handleVIPClick} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden style={{ cursor: 'pointer' }}><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
-          <svg onClick={handleVIPClick} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden style={{ cursor: 'pointer' }}><rect x="3" y="3" width="18" height="18" rx="4" ry="4" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" /></svg>
-          <svg onClick={handleVIPClick} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden style={{ cursor: 'pointer' }}><polygon points="5 3 19 12 5 21 5 3" /></svg>
-          <div onClick={handleVIPClick} style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#262626', border: '1px solid #fff', overflow: 'hidden', cursor: 'pointer' }} aria-hidden>
-             {profileSnapshot?.picUrl ? (
-               <ProfileAvatar
-                 src={profileSnapshot.picUrl}
-                 alt="Perfil"
-                 size={24}
-                 fallbackLetter={(username || '?').charAt(0).toUpperCase()}
-               />
-             ) : (
-               <img
-                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent((username || '?').charAt(0))}&background=333&color=fff`}
-                 alt="Perfil"
-                 width={24}
-                 height={24}
-                 loading="lazy"
-                 decoding="async"
-                 style={{ width: '24px', height: '24px', borderRadius: '50%', objectFit: 'cover' }}
-               />
-             )}
-          </div>
-        </nav>
-      )}
+      {view === 'home' ? <HomeView /> : <DmsView />}
 
       {/* Story Viewer Modal */}
       {activeStory && (
@@ -605,6 +529,57 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
           </div>
+        </div>
+      )}
+
+      {/* Floating Bottom Nav */}
+      {view === 'home' && !activeStory && (
+        <div style={{ position: 'fixed', bottom: 0, width: '100%', height: '50px', background: '#000', display: 'flex', justifyContent: 'space-around', alignItems: 'center', borderTop: '1px solid #262626', zIndex: 10 }}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3l9 8v10h-6v-6H9v6H3V11l9-8z"></path></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: '#262626', border: '1px solid #fff' }}></div>
+        </div>
+      )}
+
+      {/* Sneaky Sales Banner */}
+      {!activeStory && (
+        <div style={{
+          position: 'fixed',
+          bottom: view === 'home' ? '60px' : '10px',
+          left: '10px',
+          right: '10px',
+          background: '#121212',
+          border: '1px solid #262626',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '12px',
+          zIndex: 20,
+          boxShadow: '0 4px 12px rgba(0,0,0,0.5)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold', fontSize: '0.9rem' }}>Acesso Limitado</div>
+                <div style={{ fontSize: '0.8rem', color: '#8e8e8e' }}>Prévia de 10 min ativa.</div>
+              </div>
+            </div>
+            <div style={{ color: '#ed4956', fontWeight: 'bold', fontSize: '0.9rem' }}>09:46</div>
+          </div>
+          
+          <button 
+            onClick={handleVIPClick}
+            className="btn-primary"
+            style={{ width: '100%', padding: '10px', fontSize: '0.9rem' }}
+          >
+            Desbloquear Acesso Total
+          </button>
         </div>
       )}
 

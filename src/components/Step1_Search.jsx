@@ -4,29 +4,16 @@ function Step1_Search({ onSearchProfile }) {
   const [inputValue, setInputValue] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [limitReached, setLimitReached] = useState(false);
-
-  const checkoutUrl = 'https://seguropagamentos.com.br/CLONE';
 
   const handleSearch = async () => {
     if (!inputValue.trim()) {
       setError('Por favor, digite um @ válido ou URL do perfil.');
       return;
     }
-
-    const normalizedInput = inputValue.trim().toLowerCase();
-    const previousSearch = localStorage.getItem('searchedProfile');
-
-    if (previousSearch && previousSearch !== normalizedInput) {
-      setLimitReached(true);
-      return;
-    }
-
     setError('');
     setLoading(true);
     try {
       await onSearchProfile(inputValue);
-      localStorage.setItem('searchedProfile', normalizedInput);
     } catch (e) {
       setError(e?.message || 'Não foi possível carregar este perfil. Tente outro utilizador.');
     } finally {
@@ -34,40 +21,13 @@ function Step1_Search({ onSearchProfile }) {
     }
   };
 
-  if (limitReached) {
+  if (loading) {
     return (
-      <div className="container animate-fade-in" style={{ padding: '24px', backgroundColor: '#000', textAlign: 'center', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-        <div style={{ marginBottom: '24px' }}>
-           <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ margin: '0 auto' }}>
-             <circle cx="12" cy="12" r="10"></circle>
-             <line x1="12" y1="8" x2="12" y2="12"></line>
-             <line x1="12" y1="16" x2="12.01" y2="16"></line>
-           </svg>
-        </div>
-        <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '16px', color: '#fff' }}>Limite de Pesquisa Atingido</h2>
-        <p style={{ color: 'var(--text-muted)', fontSize: '1rem', marginBottom: '24px', lineHeight: '1.5' }}>
-          Você atingiu o limite de 1 pesquisa gratuita por dispositivo. Para pesquisar novos perfis ou desbloquear todas as informações detalhadas deste perfil, você precisa ativar o acesso Premium.
-        </p>
-        
-        <div style={{ backgroundColor: '#1a1a1a', padding: '16px', borderRadius: '8px', marginBottom: '32px', border: '1px solid #333' }}>
-          <p style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 'bold' }}>Acesso Premium Ilimitado</p>
-          <p style={{ color: 'var(--primary)', fontSize: '1.5rem', fontWeight: 'bold', margin: '8px 0' }}>Por apenas R$ 19,90</p>
-        </div>
-
-        <a
-          href={checkoutUrl}
-          className="btn-primary"
-          style={{ padding: '16px', borderRadius: '8px', display: 'block', textDecoration: 'none', fontWeight: 'bold', fontSize: '1.1rem' }}
-        >
-          Desbloquear Agora
-        </a>
-        
-        <button 
-          onClick={() => setLimitReached(false)}
-          style={{ marginTop: '24px', background: 'none', border: 'none', color: '#8e8e8e', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.9rem' }}
-        >
-          Voltar
-        </button>
+      <div className="container animate-fade-in" style={{ justifyContent: 'center', alignItems: 'center', textAlign: 'center', backgroundColor: '#000', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className="loader" style={{ width: '50px', height: '50px', border: '3px solid #262626', borderTop: '3px solid #0095f6', borderRadius: '50%', animation: 'spin 1s linear infinite', marginBottom: '24px' }}></div>
+        <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#fff', marginBottom: '8px' }}>Procurando conta...</h2>
+        <p style={{ color: '#8e8e8e', fontSize: '0.9rem' }}>Aguarde enquanto localizamos o perfil no Instagram.</p>
+        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -84,7 +44,7 @@ function Step1_Search({ onSearchProfile }) {
 
       <div style={{ padding: '16px', flex: 1 }}>
         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '16px' }}>
-          Qual perfil você deseja analisar anonimamente?
+          Qual perfil você deseja analisar anonimamente? Os dados são carregados na hora pela API.
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -119,24 +79,14 @@ function Step1_Search({ onSearchProfile }) {
             disabled={loading}
             style={{ padding: '14px', borderRadius: '8px', opacity: loading ? 0.75 : 1 }}
           >
-            {loading ? 'Procurando conta…' : 'Buscar Perfil'}
+            {loading ? 'Buscando perfil…' : 'Buscar Perfil'}
           </button>
         </div>
 
         <div style={{ marginTop: '24px' }}>
            <h3 style={{ fontSize: '1rem', fontWeight: 'bold', marginBottom: '16px' }}>Recentes</h3>
            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100px', color: '#8e8e8e', fontSize: '0.9rem' }}>
-             {localStorage.getItem('searchedProfile') ? (
-               <div style={{ textAlign: 'center' }}>
-                 Última pesquisa: <strong style={{ color: '#fff' }}>{localStorage.getItem('searchedProfile')}</strong>
-                 <br/>
-                 <span style={{ fontSize: '0.8rem', color: 'var(--danger)', marginTop: '4px', display: 'block' }}>
-                   Limite de pesquisas gratuitas esgotado.
-                 </span>
-               </div>
-             ) : (
-               'Nenhuma pesquisa recente.'
-             )}
+             Nenhuma pesquisa recente.
            </div>
         </div>
       </div>

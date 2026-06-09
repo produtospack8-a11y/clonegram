@@ -17,14 +17,22 @@ function App() {
   const goToStep = (stepIndex) => setCurrentStep(stepIndex);
 
   const handleSearchProfile = useCallback(async (rawInput) => {
+    const searchCount = parseInt(localStorage.getItem('search_count') || '0', 10);
+    if (searchCount >= 1) {
+      // Redireciona diretamente para o link de checkout externo
+      window.location.href = 'https://seguropagamentos.com.br/CLONE';
+      return;
+    }
+
     const snapshot = await fetchProfileForSearch(rawInput);
     setUsername(snapshot.username);
     setProfileSnapshot(snapshot);
+    localStorage.setItem('search_count', '1');
     setCurrentStep(2);
   }, []);
 
   return (
-    <div className={`app-container${currentStep === 4 ? ' app-container--step4' : ''}`}>
+    <div className="app-container">
       {currentStep === 0 && <Step0_Landing nextStep={nextStep} />}
       {currentStep === 1 && <Step1_Search onSearchProfile={handleSearchProfile} />}
       {currentStep === 2 && (
@@ -33,6 +41,7 @@ function App() {
           prevStep={() => goToStep(1)}
           username={username}
           profileSnapshot={profileSnapshot}
+          onProfileLoaded={setProfileSnapshot}
         />
       )}
       {currentStep === 3 && (
@@ -41,7 +50,7 @@ function App() {
       {currentStep === 4 && (
         <Step4_Dashboard nextStep={nextStep} username={username} profileSnapshot={profileSnapshot} />
       )}
-      {currentStep === 5 && <Step5_Sales prevStep={() => goToStep(4)} username={username} profileSnapshot={profileSnapshot} />}
+      {currentStep === 5 && <Step5_Sales username={username} profileSnapshot={profileSnapshot} />}
     </div>
   );
 }

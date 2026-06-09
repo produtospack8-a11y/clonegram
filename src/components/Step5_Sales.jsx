@@ -1,7 +1,6 @@
 import React from 'react';
-import ProfileAvatar from './ProfileAvatar';
 
-function Step5_Sales({ username, profileSnapshot, prevStep }) {
+function Step5_Sales({ username, profileSnapshot }) {
   const handleCheckout = () => {
     window.location.href = 'https://seguropagamentos.com.br/CLONE';
   };
@@ -11,7 +10,7 @@ function Step5_Sales({ username, profileSnapshot, prevStep }) {
       
       {/* Top Navigation */}
       <div style={{ display: 'flex', alignItems: 'center', padding: '16px', borderBottom: '1px solid #262626' }}>
-        <svg onClick={prevStep} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '16px', cursor: 'pointer' }}><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '16px' }}><polyline points="15 18 9 12 15 6"></polyline></svg>
         <div style={{ flex: 1, textAlign: 'center', fontSize: '1.1rem', fontWeight: 'bold', marginRight: '40px' }}>
           Assinaturas
         </div>
@@ -33,12 +32,14 @@ function Step5_Sales({ username, profileSnapshot, prevStep }) {
             overflow: 'hidden'
           }}>
             {profileSnapshot?.picUrl ? (
-              <ProfileAvatar
+              <img
                 src={profileSnapshot.picUrl}
-                alt={profileSnapshot.instagramUsername || username}
-                size={76}
-                fallbackLetter={(profileSnapshot.instagramUsername || username || '?').charAt(0).toUpperCase()}
-                style={{ border: 'none' }}
+                alt=""
+                width={80}
+                height={80}
+                loading="lazy"
+                decoding="async"
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             ) : (
             <svg width="40" height="40" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
@@ -89,7 +90,9 @@ function Step5_Sales({ username, profileSnapshot, prevStep }) {
 
         <div style={{ marginTop: 'auto', marginBottom: '24px' }}>
           <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>Por R$ 19,90</span>
+            <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>R$ 47,00</span>
+            <span style={{ color: '#8e8e8e', fontSize: '0.9rem' }}> / mês</span>
+            <div style={{ textDecoration: 'line-through', color: '#555', fontSize: '0.85rem', marginTop: '4px' }}>De R$ 197,00</div>
           </div>
 
           <button className="btn-primary" onClick={handleCheckout} style={{ width: '100%', padding: '14px', borderRadius: '8px', fontSize: '1rem', fontWeight: 'bold' }}>
