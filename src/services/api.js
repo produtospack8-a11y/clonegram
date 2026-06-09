@@ -1,6 +1,5 @@
-// Perfil pesquisado: RapidAPI (Instagram Scraper) quando `VITE_RAPIDAPI_KEY` está definido.
-// A pesquisa em Step1 usa `fetchProfileForSearch` (dados reais com a chave).
-// `getProfileInfo` mantém fallback mock para outros ecrãs (ex.: lista de seguidos fictícia).
+// Perfil pesquisado: RapidAPI ou Apify quando as chaves estão configuradas.
+import { fetchProfileFromApify, isApifyConfigured } from './apify';
 
 const simulateDelay = (ms = 800) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -197,6 +196,18 @@ export async function fetchProfileForSearch(rawInput) {
     throw new Error('Digite um nome de utilizador ou URL do Instagram válidos.');
   }
 
+  if (isApifyConfigured()) {
+    try {
+      const normalized = await fetchProfileFromApify(clean);
+      const snap = mapProfileApiToAppSnapshot(clean, normalized);
+      if (snap) return snap;
+      throw new Error('Não foi possível mapear os dados do perfil.');
+    } catch (e) {
+      console.error('[fetchProfileForSearch] Apify search failed:', e);
+      throw new Error(e?.message || 'Não foi possível carregar os dados reais deste perfil via Apify. Verifique os dados da conta.');
+    }
+  }
+
   if (RAPID_KEY) {
     try {
       const normalized = await fetchProfileFromRapidApi(clean);
@@ -235,6 +246,17 @@ export const getProfileInfo = async (username) => {
   if (!clean) {
     await simulateDelay(200);
     return mockProfile('user');
+  }
+
+  if (isApifyConfigured()) {
+    try {
+      const real = await fetchProfileFromApify(clean);
+      if (real) return real;
+      throw new Error('Não foi possível obter os dados da conta.');
+    } catch (e) {
+      console.error('[getProfileInfo] Apify lookup failed:', e);
+      throw new Error(e?.message || 'Falha ao buscar dados do perfil da API via Apify.');
+    }
   }
 
   if (RAPID_KEY) {
