@@ -202,8 +202,10 @@ export async function fetchProfileForSearch(rawInput) {
       const normalized = await fetchProfileFromRapidApi(clean);
       const snap = mapProfileApiToAppSnapshot(clean, normalized);
       if (snap) return snap;
+      throw new Error('Não foi possível mapear os dados do perfil.');
     } catch (e) {
-      console.warn('[fetchProfileForSearch] RapidAPI error, falling back to mock:', e?.message || e);
+      console.error('[fetchProfileForSearch] RapidAPI search failed:', e);
+      throw new Error(e?.message || 'Não foi possível carregar os dados reais deste perfil. Verifique os dados da conta.');
     }
   }
 
@@ -239,8 +241,10 @@ export const getProfileInfo = async (username) => {
     try {
       const real = await fetchProfileFromRapidApi(clean);
       if (real) return real;
+      throw new Error('Não foi possível obter os dados da conta.');
     } catch (e) {
-      console.warn('[getProfileInfo] RapidAPI:', e?.message || e);
+      console.error('[getProfileInfo] RapidAPI failed:', e);
+      throw new Error(e?.message || 'Falha ao buscar dados do perfil da API.');
     }
   }
 

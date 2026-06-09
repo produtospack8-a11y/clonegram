@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { getFollowers, getProfileInfo, getPosts } from '../services/api';
 import PublicImage from './PublicImage';
+import ProfileAvatar from './ProfileAvatar';
 
 /** Bases de ficheiro em `public/` (sem extensão). PublicImage tenta .webp, .jpg, .jpeg, .png e capitalização. */
 const FEED_IMAGE_BASES = [['postinsta1'], ['postinsta4', 'post4'], ['postinsta3']];
@@ -174,27 +175,12 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
       <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '12px 16px', borderBottom: '1px solid #262626' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', position: 'relative', marginBottom: '4px' }}>
-             {profileSnapshot?.picUrl ? (
-               <img
-                 src={profileSnapshot.picUrl}
-                 alt="Seu story"
-                 width={64}
-                 height={64}
-                 loading="eager"
-                 decoding="async"
-                 style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-               />
-             ) : (
-               <img
-                 src={`https://ui-avatars.com/api/?name=${encodeURIComponent(username.charAt(0) || '?')}&background=333&color=fff`}
-                 alt="Seu story"
-                 width={64}
-                 height={64}
-                 loading="eager"
-                 decoding="async"
-                 style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
-               />
-             )}
+             <ProfileAvatar 
+               src={profileSnapshot?.picUrl} 
+               alt="Seu story" 
+               size={64}
+               fallbackLetter={(username || '?').charAt(0).toUpperCase()}
+             />
              <div style={{ position: 'absolute', bottom: 0, right: 0, background: '#0095f6', borderRadius: '50%', border: '2px solid black', width: '22px', height: '22px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path></svg>
              </div>
@@ -350,17 +336,12 @@ function Step4_Dashboard({ nextStep, username, profileSnapshot }) {
         <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', marginBottom: '24px', paddingBottom: '8px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, position: 'relative' }}>
             <div style={{ position: 'absolute', top: '-15px', background: '#262626', padding: '6px 12px', borderRadius: '16px', fontSize: '0.75rem', color: '#8e8e8e', boxShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>Nota...</div>
-            <img
-              src={
-                profileSnapshot?.picUrl ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(username.charAt(0) || '?')}&background=333&color=fff`
-              }
-              style={{ width: '70px', height: '70px', borderRadius: '50%', marginTop: '16px', objectFit: 'cover' }}
-              alt=""
-              width={70}
-              height={70}
-              loading="lazy"
-              decoding="async"
+            <ProfileAvatar 
+              src={profileSnapshot?.picUrl} 
+              alt="" 
+              size={70}
+              fallbackLetter={(username || '?').charAt(0).toUpperCase()}
+              style={{ marginTop: '16px' }}
             />
             <span style={{ fontSize: '0.75rem', color: '#8e8e8e', marginTop: '6px' }}>Sua nota</span>
           </div>

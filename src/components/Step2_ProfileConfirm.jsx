@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getProfileInfo } from '../services/api';
+import ProfileAvatar from './ProfileAvatar';
 
 function snapshotToProfileData(snap) {
   if (!snap) return null;
@@ -167,17 +168,12 @@ function Step2_ProfileConfirm({ nextStep, prevStep, username, profileSnapshot, o
         {/* Profile Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px', marginBottom: '24px' }}>
           <div className="story-border">
-            {profileData?.picUrl ? (
-              <img 
-                src={profileData.picUrl} 
-                alt={username} 
-                style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '50%' }} 
-              />
-            ) : (
-              <div style={{ width: '80px', height: '80px', backgroundColor: '#363636', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', border: '2px solid #000' }}>
-                {(profileData?.instagramUsername || username).charAt(0).toUpperCase()}
-              </div>
-            )}
+            <ProfileAvatar 
+              src={profileData?.picUrl} 
+              alt={username} 
+              size={80}
+              fallbackLetter={(profileData?.instagramUsername || username).charAt(0).toUpperCase()}
+            />
           </div>
           
           <div style={{ display: 'flex', flex: 1, justifyContent: 'space-around', textAlign: 'center' }}>

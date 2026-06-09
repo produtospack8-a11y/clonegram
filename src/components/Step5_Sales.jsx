@@ -1,4 +1,5 @@
 import React from 'react';
+import ProfileAvatar from './ProfileAvatar';
 
 function Step5_Sales({ username, profileSnapshot }) {
   const handleCheckout = () => {
@@ -31,19 +32,12 @@ function Step5_Sales({ username, profileSnapshot }) {
             border: '2px solid #0095f6',
             overflow: 'hidden'
           }}>
-            {profileSnapshot?.picUrl ? (
-              <img
-                src={profileSnapshot.picUrl}
-                alt=""
-                width={80}
-                height={80}
-                loading="lazy"
-                decoding="async"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="#0095f6"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
-            )}
+            <ProfileAvatar 
+              src={profileSnapshot?.picUrl} 
+              alt="" 
+              size={80}
+              fallbackLetter={(username || '?').charAt(0).toUpperCase()}
+            />
           </div>
           
           <h1 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '8px' }}>
